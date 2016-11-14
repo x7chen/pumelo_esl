@@ -26,7 +26,7 @@ static clock_callbacks_t clock_callbacks;
 void second_handler(uint32_t second)
 {
     static uint32_t tdata = 0x12345678;
-    uint32_t p_dest = 0x30000;
+    static uint32_t p_dest = 0x30000;
     fs_ret_t ret = esl_flash_store((uint32_t const *)p_dest,&tdata,1,NULL);
     if(ret==0)
     {
@@ -117,7 +117,7 @@ int main(void)
     register_clock_event();
     // Enter main loop
     printf("\r\nstart...");
-	
+    	 esl_flash_init(true);
 //	ssd1608_init();
     for (;;)
     {
