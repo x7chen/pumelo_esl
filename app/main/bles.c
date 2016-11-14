@@ -338,7 +338,7 @@ static void gap_params_init(void)
    }*/
 static void ble_esls_data_handler(ble_esls_t * p_esls,uint8_t * p_data,uint16_t length)
 {
-   
+       
 }
 static void service_dfus_init()
 {
