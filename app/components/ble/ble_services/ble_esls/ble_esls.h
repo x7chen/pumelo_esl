@@ -16,22 +16,24 @@ extern "C" {
 
 typedef struct ble_esls_s ble_esls_t;
 
-typedef void (*ble_esls_data_handler_t) (ble_esls_t * p_esls, uint8_t * p_data, uint16_t length);
+typedef void (*ble_esls_handler_t) (ble_esls_t * p_esls, uint8_t * p_data, uint16_t length);
 
 typedef struct
 {
-    ble_esls_data_handler_t data_handler; 
+    ble_esls_handler_t packet_handler; 
+    ble_esls_handler_t cp_handler; 
 } ble_esls_init_t;
 
 struct ble_esls_s
 {
-    uint8_t                  uuid_type;               
-    uint16_t                 service_handle;         
-    ble_gatts_char_handles_t cp_handles;             
-    ble_gatts_char_handles_t data_handles;            
-    uint16_t                 conn_handle;           
-    ble_esls_data_handler_t  data_handler;     
-    bool                     is_notification_enabled; 
+    uint8_t                  	uuid_type;               
+    uint16_t                 	service_handle;         
+    ble_gatts_char_handles_t 	cp_char_handles;             
+    ble_gatts_char_handles_t 	packet_char_handles;            
+    uint16_t                 	conn_handle;           
+    ble_esls_handler_t       	packet_handler;     
+    ble_esls_handler_t       	cp_handler;     
+    bool                     	is_notification_enabled; 
 };
 
 uint32_t ble_esls_init(ble_esls_t * p_esls, const ble_esls_init_t * p_esls_init);

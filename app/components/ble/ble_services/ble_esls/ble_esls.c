@@ -12,7 +12,7 @@
 #define BLE_ESLS_MAX_CP_CHAR_LEN        	BLE_ESLS_MAX_DATA_LEN        
 #define BLE_ESLS_MAX_DATA_CHAR_LEN        	BLE_ESLS_MAX_DATA_LEN       
 
-#define ESLS_BASE_UUID                  {{0x9E, 0xCA, 0xDC, 0x24, 0x0E, 0xE5, 0xA9, 0xE0, 0x93, 0xF3, 0xA3, 0xB5, 0x00, 0x00, 0x40, 0x6E}} 
+#define ESLS_BASE_UUID                  {{0x9B, 0xCA, 0xDC, 0x24, 0x0E, 0xE5, 0xA9, 0xE0, 0x93, 0xF3, 0xA3, 0xB5, 0x00, 0x00, 0x40, 0x6E}} 
 
 
 static void on_connect(ble_esls_t * p_esls, ble_evt_t * p_ble_evt)
@@ -31,7 +31,7 @@ static void on_write(ble_esls_t * p_esls, ble_evt_t * p_ble_evt)
     ble_gatts_evt_write_t * p_evt_write = &p_ble_evt->evt.gatts_evt.params.write;
 
     if (
-        (p_evt_write->handle == p_esls->cp_handles.cccd_handle)
+        (p_evt_write->handle == p_esls->cp_char_handles.cccd_handle)
         &&
         (p_evt_write->len == 2)
        )
@@ -46,12 +46,20 @@ static void on_write(ble_esls_t * p_esls, ble_evt_t * p_ble_evt)
         }
     }
     else if (
-             (p_evt_write->handle == p_esls->data_handles.value_handle)
+             (p_evt_write->handle == p_esls->packet_char_handles.value_handle)
              &&
-             (p_esls->data_handler != NULL)
+             (p_esls->packet_handler != NULL)
             )
     {
-        p_esls->data_handler(p_esls, p_evt_write->data, p_evt_write->len);
+        p_esls->packet_handler(p_esls, p_evt_write->data, p_evt_write->len);
+    }
+    else if (
+             (p_evt_write->handle == p_esls->cp_char_handles.value_handle)
+             &&
+             (p_esls->cp_handler != NULL)
+            )
+    {
+        p_esls->cp_handler(p_esls, p_evt_write->data, p_evt_write->len);
     }
     else
     {
@@ -77,6 +85,7 @@ static uint32_t cp_char_add(ble_esls_t * p_esls, const ble_esls_init_t * p_esls_
     memset(&char_md, 0, sizeof(char_md));
 
     char_md.char_props.notify = 1;
+    char_md.char_props.write  = 1;
     char_md.p_char_user_desc  = NULL;
     char_md.p_char_pf         = NULL;
     char_md.p_user_desc_md    = NULL;
@@ -107,10 +116,10 @@ static uint32_t cp_char_add(ble_esls_t * p_esls, const ble_esls_init_t * p_esls_
     return sd_ble_gatts_characteristic_add(p_esls->service_handle,
                                            &char_md,
                                            &attr_char_value,
-                                           &p_esls->cp_handles);
+                                           &p_esls->cp_char_handles);
 }
 
-static uint32_t data_char_add(ble_esls_t * p_esls, const ble_esls_init_t * p_esls_init)
+static uint32_t packet_char_add(ble_esls_t * p_esls, const ble_esls_init_t * p_esls_init)
 {
     ble_gatts_char_md_t char_md;
     ble_gatts_attr_t    attr_char_value;
@@ -151,7 +160,7 @@ static uint32_t data_char_add(ble_esls_t * p_esls, const ble_esls_init_t * p_esl
     return sd_ble_gatts_characteristic_add(p_esls->service_handle,
                                            &char_md,
                                            &attr_char_value,
-                                           &p_esls->data_handles);
+                                           &p_esls->packet_char_handles);
 }
 
 
@@ -192,7 +201,8 @@ uint32_t ble_esls_init(ble_esls_t * p_esls, const ble_esls_init_t * p_esls_init)
     VERIFY_PARAM_NOT_NULL(p_esls_init);
 
     p_esls->conn_handle             = BLE_CONN_HANDLE_INVALID;
-    p_esls->data_handler            = p_esls_init->data_handler;
+    p_esls->packet_handler          = p_esls_init->packet_handler;
+    p_esls->cp_handler              = p_esls_init->cp_handler;
     p_esls->is_notification_enabled = false;
 
     err_code = sd_ble_uuid_vs_add(&esls_base_uuid, &p_esls->uuid_type);
@@ -209,7 +219,7 @@ uint32_t ble_esls_init(ble_esls_t * p_esls, const ble_esls_init_t * p_esls_init)
     err_code = cp_char_add(p_esls, p_esls_init);
     VERIFY_SUCCESS(err_code);
 
-    err_code = data_char_add(p_esls, p_esls_init);
+    err_code = packet_char_add(p_esls, p_esls_init);
     VERIFY_SUCCESS(err_code);
 
     return NRF_SUCCESS;
@@ -234,7 +244,7 @@ uint32_t ble_esls_cp_update(ble_esls_t * p_esls, uint8_t * p_string, uint16_t le
 
     memset(&hvx_params, 0, sizeof(hvx_params));
 
-    hvx_params.handle = p_esls->cp_handles.value_handle;
+    hvx_params.handle = p_esls->cp_char_handles.value_handle;
     hvx_params.p_data = p_string;
     hvx_params.p_len  = &length;
     hvx_params.type   = BLE_GATT_HVX_NOTIFICATION;

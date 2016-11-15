@@ -15,6 +15,7 @@ SRC_FILES += \
   $(PROJ_DIR)/main/bles.c \
   $(PROJ_DIR)/main/alarm.c \
   $(PROJ_DIR)/main/fs_esl_data.c \
+  $(PROJ_DIR)/main/lable_data.c \
   $(PROJ_DIR)/main/nrf_dfu_flash_buttonless.c \
   $(SDK_ROOT)/bsp/bsp.c \
   $(SDK_ROOT)/bsp/bsp_btn_ble.c \

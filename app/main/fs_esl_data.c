@@ -74,7 +74,7 @@ uint32_t esl_flash_init(bool sd_enabled)
 }
 
 
-fs_ret_t esl_flash_store(uint32_t const * p_dest, uint32_t const * const p_src, uint32_t len_words, esl_flash_callback_t callback)
+fs_ret_t esl_flash_store(uint32_t p_dest, uint8_t * p_src, uint32_t len_words, esl_flash_callback_t callback)
 {
     fs_ret_t ret_val = FS_SUCCESS;
 
@@ -90,7 +90,7 @@ fs_ret_t esl_flash_store(uint32_t const * p_dest, uint32_t const * const p_src, 
         // Set the flag to indicate ongoing operation
         m_flags |= FLASH_FLAG_OPER;
         //lint -e611
-        ret_val = fs_store(&fs_esl_config, p_dest, p_src, len_words, (void*)callback);
+        ret_val = fs_store(&fs_esl_config, (fs_esl_config.p_start_addr)+p_dest, (const uint32_t * const)p_src, len_words, (void*)callback);
 
         if (ret_val != FS_SUCCESS)
         {
@@ -108,7 +108,7 @@ fs_ret_t esl_flash_store(uint32_t const * p_dest, uint32_t const * const p_src, 
 
 /** @brief Internal function to initialize DFU BLE transport
  */
-fs_ret_t esl_flash_erase(uint32_t const * p_dest, uint32_t num_pages, esl_flash_callback_t callback)
+fs_ret_t esl_flash_erase(uint32_t p_dest, uint32_t num_pages, esl_flash_callback_t callback)
 {
     fs_ret_t ret_val = FS_SUCCESS;
     NRF_LOG_INFO("Erasing: 0x%08x, num: %d\r\n", (uint32_t)p_dest, num_pages);
@@ -123,7 +123,7 @@ fs_ret_t esl_flash_erase(uint32_t const * p_dest, uint32_t num_pages, esl_flash_
         }
 
         m_flags |= FLASH_FLAG_OPER;
-        ret_val = fs_erase(&fs_esl_config, p_dest, num_pages, (void*)callback);
+        ret_val = fs_erase(&fs_esl_config, (fs_esl_config.p_start_addr)+p_dest, num_pages, (void*)callback);
 
         if (ret_val != FS_SUCCESS)
         {

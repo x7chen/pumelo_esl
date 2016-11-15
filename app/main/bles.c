@@ -55,6 +55,7 @@
 
 #include "ble_dfu.h"
 #include "ble_esls.h"
+#include "lable_data.h"
 
 #define NRF_LOG_MODULE_NAME "APP"
 #include "nrf_log.h"
@@ -336,10 +337,6 @@ static void gap_params_init(void)
             break;
     }
    }*/
-static void ble_esls_data_handler(ble_esls_t * p_esls,uint8_t * p_data,uint16_t length)
-{
-       
-}
 static void service_dfus_init()
 {
     uint32_t err_code;
@@ -364,7 +361,8 @@ static void service_esls_init()
     // Initialize the Device Firmware Update Service.
     memset(&esls_init, 0, sizeof(esls_init));
 
-    esls_init.data_handler                               = ble_esls_data_handler;
+    esls_init.packet_handler                             = esl_packet_handle;
+    esls_init.cp_handler                                 = esl_cp_handle;
 
     err_code = ble_esls_init(&m_esls, &esls_init);
     APP_ERROR_CHECK(err_code);
