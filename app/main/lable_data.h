@@ -4,6 +4,7 @@
 #include "ble_esls.h"
 typedef struct
 {
+    uint32_t const * start_addr;
     uint16_t length;
     uint16_t crc16;
 }esl_data_t;

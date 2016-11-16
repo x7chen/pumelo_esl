@@ -170,3 +170,7 @@ fs_ret_t esl_flash_wait(void)
     return FS_SUCCESS;
 }
 
+fs_config_t * get_esl_fs_config(void)
+{
+    return &fs_esl_config;
+}
