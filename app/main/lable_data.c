@@ -58,7 +58,7 @@ void esl_cp_resp(ble_esls_t * p_esls, uint8_t * resp,uint16_t length)
     ble_esls_cp_update(p_esls,resp,length);
 }
 
-uint32_t esl_data_check()
+uint32_t esl_data_verify()
 {
     return 0;
     /*
@@ -89,7 +89,7 @@ void esl_cp_handle(ble_esls_t * p_esls, uint8_t * control_point,uint16_t length)
             esl_cp_resp(p_esls, resp,2);    
             break;
         case 0x01:
-            if(esl_data_check()==0)
+            if(esl_data_verify()==0)
             {
                 m_flags = TRANS_FLAG_DONE;
                 resp[0] = 0x01;
