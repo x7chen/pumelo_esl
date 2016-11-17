@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-#define BLE_UUID_ESLS_SERVICE 0x0001                     
+#define BLE_UUID_ESLS_SERVICE 0x1800                     
 #define BLE_ESLS_MAX_DATA_LEN (GATT_MTU_SIZE_DEFAULT - 3) 
 
 typedef struct ble_esls_s ble_esls_t;

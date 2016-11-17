@@ -29,7 +29,7 @@ static uint32_t m_flags;
 #ifdef BLE_STACK_SUPPORT_REQD
 
 #define ESL_DATA_START_ADDRESS 		0x30000
-#define ESL_DATA_END_ADDRESS		0x34000 
+#define ESL_DATA_END_ADDRESS		0x32000 
 // Function prototypes
 static void fs_evt_handler(fs_evt_t const * const evt, fs_ret_t result);
 
@@ -74,7 +74,7 @@ uint32_t esl_flash_init(bool sd_enabled)
 }
 
 
-fs_ret_t esl_flash_store(uint32_t p_dest, uint8_t * p_src, uint32_t len_words, esl_flash_callback_t callback)
+fs_ret_t esl_flash_store(uint32_t p_dest, uint32_t * p_src, uint32_t len_words, esl_flash_callback_t callback)
 {
     fs_ret_t ret_val = FS_SUCCESS;
 
@@ -90,7 +90,7 @@ fs_ret_t esl_flash_store(uint32_t p_dest, uint8_t * p_src, uint32_t len_words, e
         // Set the flag to indicate ongoing operation
         m_flags |= FLASH_FLAG_OPER;
         //lint -e611
-        ret_val = fs_store(&fs_esl_config, (fs_esl_config.p_start_addr)+p_dest, (const uint32_t * const)p_src, len_words, (void*)callback);
+        ret_val = fs_store(&fs_esl_config, (fs_esl_config.p_start_addr)+(p_dest/4), (const uint32_t * const)p_src, len_words, (void*)callback);
 
         if (ret_val != FS_SUCCESS)
         {

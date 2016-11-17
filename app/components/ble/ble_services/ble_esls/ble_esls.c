@@ -6,14 +6,12 @@
 #include "ble_srv_common.h"
 #include "sdk_common.h"
 
-#define BLE_UUID_ESLS_CP_CHARACTERISTIC 	0x0002                      
-#define BLE_UUID_ESLS_DATA_CHARACTERISTIC 	0x0003                      
+#define BLE_UUID_ESLS_CP_CHARACTERISTIC 	0x1801                      
+#define BLE_UUID_ESLS_DATA_CHARACTERISTIC 	0x1802                      
 
 #define BLE_ESLS_MAX_CP_CHAR_LEN        	BLE_ESLS_MAX_DATA_LEN        
 #define BLE_ESLS_MAX_DATA_CHAR_LEN        	BLE_ESLS_MAX_DATA_LEN       
-
-#define ESLS_BASE_UUID                  {{0x9B, 0xCA, 0xDC, 0x24, 0x0E, 0xE5, 0xA9, 0xE0, 0x93, 0xF3, 0xA3, 0xB5, 0x00, 0x00, 0x40, 0x6E}} 
-
+#define ESLS_BASE_UUID  {{0xDB,0x45,0x5A,0xAF,0x93,0xE0,0xDA,0xBC,0xC6,0x40,0x00,0xAF,0x00,0x00,0x1A,0xDA}} 
 
 static void on_connect(ble_esls_t * p_esls, ble_evt_t * p_ble_evt)
 {

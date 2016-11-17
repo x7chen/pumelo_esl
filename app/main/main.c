@@ -111,7 +111,7 @@ int main(void)
     // Enter main loop
     printf("\r\nstart...");
     	 esl_flash_init(true);
-//	ssd1608_init();
+	ssd1608_init();
     for (;;)
     {
         app_sched_execute();
